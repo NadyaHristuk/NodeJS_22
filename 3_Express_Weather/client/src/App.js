@@ -83,7 +83,7 @@ class App extends Component {
 		// const URL = `http://api.apixu.com/v1/forecast.json?key=${WEATHER_KEY}&q=${cityName}&days=${numForecastDay}`;
 
 		axios
-			.post('http://localhost:3001/weather', { city: cityName })
+			.post('http://localhost:3002/weather', { city: cityName })
 			.then((res) => {
 				return res.data;
 			})

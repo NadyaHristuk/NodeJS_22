@@ -7,8 +7,10 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors());
+
 // app.use(addAllowOriginHeader);
-// app.options("*", addCorsHeaders);
+// app.options('*', addCorsHeaders);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
