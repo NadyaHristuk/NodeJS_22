@@ -1,0 +1,78 @@
+.weather_animated {
+	height: 300px;
+	width: 500px;
+	border-radius: 10px;
+	border: 4px solid #608094;
+	background: #16394c6b;
+	margin: 70px 0;
+	color: #fff;
+	font-family: "Open Sans", "Gill Sans MT", "Gill Sans", Corbel, Arial, sans-serif;
+	font-size: 20px;
+}
+
+.weather_animated .location {
+	display: block;
+	height: 40px;
+	text-align: center;
+	padding-top: 15px;
+}
+
+.weather_animated .location span {
+	font-weight: bold;
+	text-align: center;
+}
+
+.container {
+	display: flex;
+	justify-content: space-between;
+}
+
+.main_left {
+	width: 140px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.main_left i {
+	background-size: cover;
+	font-size: 40px;
+	width: 140px;
+	height: 137px;
+	/* top: 10px !important; */
+}
+
+.weather_animated i.night {
+	background-size: cover;
+	background-repeat: no-repeat;
+	top: 16px;
+}
+
+.main_center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.main_left span {
+	margin: 10px 0;
+	font-weight: bold;
+	text-align: center;
+}
+
+.main_right {
+	height: 137px;
+	padding-top: 26px;
+
+	left: unset;
+}
+
+.main_right span {
+	display: block;
+	margin-bottom: 2px;
+	font-size: 20px;
+}
+
+.temperature {
+	font-size: 32px;
+}

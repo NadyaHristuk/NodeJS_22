@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
 import Loader from 'react-loader-spinner';
 import WeatherToday from './WeatherToday';
 import './App.css';
@@ -8,17 +7,23 @@ import Search from './Search';
 import { Promise } from 'rsvp';
 import DefaultCityImg from './DefaultCityBG.jpg';
 
-const WEATHER_KEY = '32097cc475f84a0dac883738192204';
+const WEATHER_KEY = 'eb51365df3129ba81aad6378ef1b2628';
 const IMAGE_KEY = '7986301-c14a62fbcda5a08a22ab81f9a';
 
 class App extends Component {
 	state = {
 		isLoading: true,
 		cityName: 'Kiev',
+		query: 'Kiev, Ukraine',
 		bgIMG: '',
 		lat: 50.25,
 		lng: 30.3,
-		country: 'Ukraine'
+		weather_icons: 'https://assets.weatherstack.com/images/symbol.png',
+		weather_descriptions: 'Overcast',
+		wind_speed: 0,
+		pressure: 0,
+		precip: 0,
+		temp_c: 0
 	};
 
 	getInfoMapClick = (e) => {
@@ -26,8 +31,7 @@ class App extends Component {
 		let lng = e.latLng.lng();
 		console.log(lat, lng);
 		const { numForecastDay } = this.state;
-		const URL = `http://api.apixu.com/v1/forecast.json?key=${WEATHER_KEY}&q=${lat},
-    ${lng}&days=${numForecastDay}`;
+		const URL = `http://api.apixu.com/v1/forecast.json?key=${WEATHER_KEY}&q=${lat},${lng}`;
 		console.log(URL);
 		axios
 			.get(URL)
@@ -39,9 +43,10 @@ class App extends Component {
 					{
 						isLoading: false,
 						cityName: data.location.name,
+						country: data.location.country,
 						lat: data.location.lat,
 						lng: data.location.lon,
-						country: data.location.country,
+						query: data.request.query,
 						temp_c: data.current.temp_c,
 						text: data.current.condition.text,
 						iconUrl: data.current.condition.icon
@@ -57,15 +62,15 @@ class App extends Component {
 	searchImages() {
 		const { cityName } = this.state;
 
-		const URL = `https://pixabay.com/api/?key=${IMAGE_KEY}&q=${cityName}`;
+		// const URL = `https://pixabay.com/api/?key=${IMAGE_KEY}&q=${cityName}`;
+		const URL = `http://localhost:3002/images`;
 		console.log(URL);
 		axios
-			.get(URL)
+			.post(URL, { city: cityName })
 			.then((res) => {
 				return res.data;
 			})
 			.then((data) => {
-				// console.log(Math.floor(Math.random() * data.hits.length));
 				if (data.hits.length === 0) {
 					this.setState({
 						bgIMG: DefaultCityImg
@@ -81,9 +86,9 @@ class App extends Component {
 	updateWeather() {
 		const { cityName } = this.state;
 		// const URL = `http://api.apixu.com/v1/forecast.json?key=${WEATHER_KEY}&q=${cityName}&days=${numForecastDay}`;
-
+		const URL = 'http://localhost:3002/weather';
 		axios
-			.post('http://localhost:3002/weather', { city: cityName })
+			.post(URL, { city: cityName })
 			.then((res) => {
 				return res.data;
 			})
@@ -93,10 +98,15 @@ class App extends Component {
 					lat: data.location.lat,
 					lng: data.location.lon,
 					country: data.location.country,
-					temp_c: data.current.temp_c,
-					text: data.current.weather_descriptions,
-					iconUrl: data.current.weather_icons
+					temp_c: data.current.temperature,
+					weather_descriptions: data.current.weather_descriptions,
+					iconUrl: data.current.weather_icons,
+					wind_speed: data.current.wind_speed,
+					pressure: data.current.pressure,
+					precip: data.current.precip,
+					query: data.request.query
 				});
+				console.log(data);
 			})
 			.catch((err) => {
 				if (err) console.error('Cannot fetch Weather Data from API', err);
@@ -109,23 +119,28 @@ class App extends Component {
 	}
 
 	updateWeatherAndImage(value) {
-		const { cityName, numForecastDay } = this.state;
-		let UpWeather = axios.get(
-			`http://api.apixu.com/v1/forecast.json?key=${WEATHER_KEY}&q=${cityName}&days=${numForecastDay}`
-		);
-		let UpImg = axios.get(`https://pixabay.com/api/?key=${IMAGE_KEY}&q=${cityName}`);
+		const { cityName } = this.state;
+		let UpWeather = axios.get(`https://pixabay.com/api/?key=${IMAGE_KEY}&q=${cityName}`, { city: cityName });
+		let UpImg = axios.get(`http://api.weatherstack.com/forecast?access_key=${WEATHER_KEY}&query=${cityName}`, {
+			city: cityName
+		});
 		Promise.all([ UpWeather, UpImg ]).then((res) => {
-			console.log(res);
+			// console.log(res);
 			this.setState({
 				isLoading: false,
-				bgIMG: res[1].data.hits[Math.floor(Math.random() * res[1].data.hits.length)].largeImageURL,
+				bgIMG: res[1].data.hits[0].largeImageURL,
 				cityName: res[0].data.location.name,
 				lat: res[0].data.location.lat,
 				lng: res[0].data.location.lon,
 				country: res[0].data.location.country,
-				temp_c: res[0].data.current.temp_c,
+				temp_c: res[0].data.current.temperature,
 				text: res[0].data.current.condition.text,
-				iconUrl: res[0].data.current.condition.icon
+				iconUrl: res[0].data.current.weather_icons,
+				weather_descriptions: res[0].data.current.weather_descriptions,
+				wind_speed: res[0].data.current.wind_speed,
+				pressure: res[0].data.current.pressure,
+				precip: res[0].data.current.precip,
+				query: res[0].data.request.query
 			});
 		});
 	}
@@ -143,8 +158,22 @@ class App extends Component {
 	};
 
 	render() {
-		const { cityName, isLoading, temp_c, text, iconUrl, lng, lat, country, bgIMG } = this.state;
-
+		const {
+			cityName,
+			isLoading,
+			temp_c,
+			weather_descriptions,
+			iconUrl,
+			lng,
+			lat,
+			query,
+			bgIMG,
+			wind_speed,
+			pressure,
+			precip,
+			country
+		} = this.state;
+		console.log(this.state);
 		return (
 			<div>
 				{isLoading ? (
@@ -163,16 +192,21 @@ class App extends Component {
     ),url(${bgIMG})`
 						}}
 					>
-						<h1>Real-Time World Weather App</h1>
+						<h1 className="title">Real-Time World Weather App</h1>
 						<Search className="search" getInput={this.cityNameUpdate} />
 						<WeatherToday
+							className="weather_block"
 							cityName={cityName}
 							temp_c={temp_c}
-							text={text}
+							text={weather_descriptions}
 							iconUrl={iconUrl}
 							lat={lat}
 							lng={lng}
 							country={country}
+							query={query}
+							wind_speed={wind_speed}
+							pressure={pressure}
+							precip={precip}
 							getInfo={this.getInfoMapClick}
 						/>
 					</div>

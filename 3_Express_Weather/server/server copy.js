@@ -53,64 +53,6 @@ app.post(
 	}
 );
 
-// const URL = `https://pixabay.com/api/?key=${IMAGE_KEY}&q=${cityName}`;
-
-app.post(
-	'/images',
-	(req, res, next) => {
-		const schema = Joi.object({
-			city: Joi.string().required()
-		});
-		const result = Joi.validate(req.body, schema);
-
-		if (result.error) {
-			return res.status(400).send(result.error);
-		}
-
-		next();
-	},
-	async (req, res) => {
-		const { city } = req.body;
-
-		const response = await node_fetch(`https://pixabay.com/api/?key=${process.env.IMAGE_KEY}&q=${city}`);
-		const resBody = await response.json();
-
-		if (resBody.error) {
-			return res.status(resBody.error.code).send(resBody.error);
-		}
-
-		return res.status(200).send(resBody);
-	}
-);
-
-app.post(
-	'/iw',
-	(req, res, next) => {
-		const schema = Joi.object({
-			city: Joi.string().required()
-		});
-		const result = Joi.validate(req.body, schema);
-
-		if (result.error) {
-			return res.status(400).send(result.error);
-		}
-
-		next();
-	},
-	async (req, res) => {
-		const { city } = req.body;
-
-		const response = await node_fetch(`https://pixabay.com/api/?key=${process.env.IMAGE_KEY}&q=${city}`);
-		const resBody = await response.json();
-
-		if (resBody.error) {
-			return res.status(resBody.error.code).send(resBody.error);
-		}
-
-		return res.status(200).send(resBody);
-	}
-);
-
 function addAllowOriginHeader(req, res, next) {
 	res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
 	next();
