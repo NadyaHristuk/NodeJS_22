@@ -22,14 +22,14 @@ app.get('/artists', (req, res)=>{
     db.collection('artists').find().toArray((err, docs) => {
         if (err) return res.sendStatus(500);
 
-        res.send(docs)
+        res.send(docs);
     })
 })
 
 app.post('/artists', validateArtist, (req, res) =>{
     const artist  = {
         name: req.body.name
-    }
+    };
 
     db.collection('artists').insertOne(artist, (err) =>{
         if (err) return res.sendStatus(500);
@@ -61,32 +61,25 @@ app.delete('/artists/:id', (req, res) => {
     })
 })
 
-
-
 function validateArtist (req, res, next) {
     const schema = Joi.object().keys({
         name: Joi.string().required()
-    })
-
+    });
     const result = Joi.validate(req.body, schema);
 
-		if (result.error) return res.status(400).send(result.error);
+    if (result.error) return res.status(400).send(result.error);
 
     next();
 }
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, databaseConect) => {
-    if(err) {
-        return console.log(err);
-    }
+    if(err) return console.log(err);
     
     console.log("Connected successfully to BD");
    
     db = databaseConect.db(dbName);
 
-    app.listen(process.env.PORT, ()=>{
+    app.listen(process.env.PORT, () => {
         console.log('app is runnin on port ' + process.env.PORT);
-    }
-    )  
-    
+    })  
   });
