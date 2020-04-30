@@ -18,53 +18,46 @@ app.get('/', (req, res) => {
     res.send('hello from API');
 })
 
-app.get('/artist', (req, res)=>{
+app.get('/artists', (req, res)=>{
     db.collection('artists').find().toArray((err, docs) => {
-        if (err) {
-            return res.sendStatus(500);
-        }
+        if (err) return res.sendStatus(500);
+
         res.send(docs)
     })
 })
 
-app.post('/artist', validateArtist, (req, res) =>{
+app.post('/artists', validateArtist, (req, res) =>{
     const artist  = {
         name: req.body.name
     }
 
-    db.collection('artists').insert(artist, (err,  result) =>{
-        if (err) {
-            return res.sendStatus(500);
-        }
-        res.send(artist);
+    db.collection('artists').insertOne(artist, (err) =>{
+        if (err) return res.sendStatus(500);
+
+        res.status(200).json(artist);
     })
 } )
 
-app.get('/artist/:id', (req, res) => {
+app.get('/artists/:id', (req, res) => {
     db.collection('artists').findOne({_id: ObjectID(req.params.id)}, (err, docs) => {
-        if (err) {
-            return res.sendStatus(500);
-        }
-        res.send(docs);
-    }   )
+        if (err) return res.sendStatus(500);
+
+        res.status(200).json(docs);
+    })
 })
 
-app.put('/artist/:id', validateArtist, (req, res) => {
+app.put('/artists/:id', validateArtist, (req, res) => {
     db.collection('artists').updateOne({_id: ObjectID(req.params.id)}, {$set: {name: req.body.name }}, (err, docs) =>
     {
-        if (err) {
-            return res.sendStatus(500);
-        }
-        res.send(docs);
+        if (err) return res.sendStatus(500);
+        res.status(200).send('was upd');
     } )
 })
 
-app.delete('/artist/:id', (req, res) => {
+app.delete('/artists/:id', (req, res) => {
     db.collection('artists').deleteOne({_id: ObjectID(req.params.id)}, (err, result) => {
-        if (err) {
-            return res.sendStatus(500);
-        }
-        res.send('was del');
+        if (err) return res.sendStatus(500);
+        res.status(200).send('was del');
     })
 })
 
@@ -77,9 +70,7 @@ function validateArtist (req, res, next) {
 
     const result = Joi.validate(req.body, schema);
 
-		if (result.error) {
-			return res.status(400).send(result.error);
-		}
+		if (result.error) return res.status(400).send(result.error);
 
     next();
 }
