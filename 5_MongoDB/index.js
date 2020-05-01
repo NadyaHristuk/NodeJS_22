@@ -70,15 +70,13 @@ function validateArtist (req, res, next) {
 
     const result = Joi.validate(req.body, schema);
 
-		if (result.error) return res.status(400).send(result.error);
+	if (result.error) return res.status(400).send(result.error);
 
     next();
 }
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, databaseConect) => {
-    if(err) {
-        return console.log(err);
-    }
+    if(err) return console.log(err);
     
     console.log("Connected successfully to BD");
    
@@ -86,7 +84,5 @@ MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (e
 
     app.listen(process.env.PORT, ()=>{
         console.log('app is runnin on port ' + process.env.PORT);
-    }
-    )  
-    
+    })  
   });
