@@ -1,0 +1,20 @@
+.task {
+	background-color: #5c7fa4a6;
+	color: #ffffff;
+	display: flex;
+	justify-content: space-between;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	border-radius: 4px;
+	border-bottom: 2px solid #797979;
+	padding-left: 10px;
+	padding-right: 10px;
+	align-items: center;
+	font-weight: bold;
+}
+
+.input {
+	width: 75%;
+	border-radius: 6px;
+	border: 2px solid #b0b0b0;
+}
