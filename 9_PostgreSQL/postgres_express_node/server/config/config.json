@@ -1,0 +1,15 @@
+{
+  "development": {
+    "url": "postgres://gokseqti:wmBDw8iAnDflpuyKP3LNlG2_3mjtw7Ua@balarama.db.elephantsql.com:5432/gokseqti",
+    "use_env_variable": "postgres://gokseqti:wmBDw8iAnDflpuyKP3LNlG2_3mjtw7Ua@balarama.db.elephantsql.com:5432/gokseqti",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "nadin",
+    "password": null,
+    "database": "todos-test",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}
