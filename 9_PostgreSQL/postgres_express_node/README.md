@@ -1,38 +1,21 @@
  # Начало работы с Node, Express и Postgres с помощью Sequelize. 
 
- https://www.postgresql.org/download/
- https://www.guru99.com/download-install-postgresql.html
- https://www.pgadmin.org/download/
-
- elephantsql.com - если вы не хотите погружаться в установку Postgres, вы можете выбрать версию PostgreSQL, размещенную в Интернете. Я рекомендую ElephantSQL. Бесплатная версия даст вам только 20 МБ. Учитывая довольно маленький размер создаваемого приложения, этого должно быть более чем достаточно.
- Во вкладке browse - добавить следующие значения 
- CREATE TABLE students(
-s_id integer PRIMARY KEY,
-name text,
-start_year integer
-);
-INSERT INTO students(s_id, name, start_year)
-VALUES (1451, 'Анна', 2014),
-(1432, 'Виктор', 2014),
-(1556, 'Нина', 2015);
-и нажать Execute
-Это создаст таблицу students и сразу добавит в нее студентов
-переходим к премеру 01
-
-Настройка проекта
+### Настройка проекта 
 Создадим папку для проекта и создадим заготовку для проекта 
-$ npm init -y
+
+`$ npm init -y`
 
    Установите Express и несколько необходимых зависимостей.
 
-   $ npm i express morgan
+   `$ npm i express morgan`
 
    Создайте файл в корневой папке и назовите его app.js.
 
-$ touch app.js
+`$ touch app.js`
 
 В этом файле давайте создадим наше приложение Express.
 
+```javascrypt
 const express = require('express');
 const logger = require('morgan');
 
@@ -41,13 +24,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-require('./server/routes')(app);
+
 app.get('*', (req, res) =>
 	res.status(200).send({
 	                      message: 'Welcome to the beginning of nothingness.',
 	})
 );
-
 
 const port = parseInt(process.env.PORT, 10) || 8000;
 app.set('port', port);
@@ -56,49 +38,45 @@ app.set('port', port);
 app.listen(port, () => {
   console.log(`The server is running at localhost:${port}`);
 });
+```
 
+После этого нам понадобится способ не перезапускать сервер каждый раз, когда мы что-то изменяем в нашем коде. Для этого мы будем использовать nodemon пакет npm. И установим его как зависимость на время разработки
 
-После этого нам понадобится способ перезапускать сервер каждый раз, когда мы что-то изменяем в нашем коде. Для этого мы будем использовать nodemon пакет npm.
+`$ npm i -D nodemon`
 
-$ npm i -D nodemon
+Затем откройте ваш package.json файл и создайте команду для запуска сервера. Эта команда будет создана в scripts разделе. Редактировать свои package.json в scripts разделе следующим образом
 
-Затем откройте ваш package.jsonфайл и создайте команду для запуска сервера. Эта команда будет создана в scriptsразделе. Редактировать свои package.jsonв scriptsразделе следующим образом
-
+```
 "scripts": {
   "dev": "nodemon app.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
 },
-
+```
 Теперь приложение будет запускаться через
 
-$ npm run dev
+`$ npm run dev`
 
-И если мы перейдем на  http://localhost:8000. то увидим сообщение {"message":"Welcome to the beginning of nothingness."}
+И если мы перейдем на  http://localhost:8000. то увидим сообщение 
+`{"message":"Welcome to the beginning of nothingness."}`
 
    Итак, мы будем использовать PostgreSQL и Sequelize в качестве ORM, для написания приложения Todo.
 
-
-
  ###  Настройка Sequelize
 Для этой части нам потребуется рабочая установка PostgreSQL. 
-В Интернете много ресурсов о том, как установить и настроить Postgres, поэтому я не буду на этом концентрироваться.
+Мы будем использовать ранее созданное подключение к облачной PostgreSQL.
 
-
-
-Далее нам потребуется Sequelize . Это ORM, который будет взаимодействовать с базой данных Postgres для нас. Мы собираемся использовать пакет Sequelize CLI для начальной загрузки проекта для нас. Это также поможет нам генерировать миграции баз данных .
+Далее нам потребуется **Sequelize** . Это ORM, который будет взаимодействовать с базой данных Postgres для нас. Мы собираемся использовать пакет Sequelize CLI для начальной загрузки проекта для нас. Это также поможет нам генерировать миграции баз данных .
 
 Начнем с установки пакета Sequelize CLI.
+Можно установить глобально, так удобней для работы
+`npm i -g sequelize-cli`
+Или локальную установку
+`npm i sequelize-cli`
+Вы можете установить sequelize-cliпакет в своем проекте локально, используя -D вместо флага -g. Недостатком этого будет то, что вам нужно будет ставить перед каждым вызовом sequelize команды префикс node_modules/.bin/sequelize
 
-$ npm i -g sequelize-cli
-
-
-npm i sequelize-cli
-
-Вы можете установить sequelize-cliпакет в своем проекте локально, используя -D вместо флага -g. Недостатком этого будет то, что вам нужно будет ставить перед каждым вызовом sequelizeкоманды префикс node_modules/.bin/sequelize
-
-Далее нам нужно настроить Sequelize для нашего проекта. Для этого мы создадим .sequelizer файл в корневой папке нашего проекта. 
+Далее нам нужно настроить Sequelize для нашего проекта. Для этого мы создадим **.sequelizer** в корневой папке нашего проекта. 
 В этом файле мы будем указывать пути к файлам, требуемым для Sequelize. Поместите следующее содержимое в этот файл:
 
+```
 const path = require('path');
 
 module.exports = {
@@ -107,14 +85,18 @@ module.exports = {
   "seeders-path": path.resolve('./server/seeders'),
   "migrations-path": path.resolve('./server/migrations')
 };
+```
 
-config.json Файл содержит наши настройки конфигурации приложения, такие как настройка аутентификации базы данных. migrations папка будет содержать миграции нашего приложения, а models папка будет содержать модели приложений. Исходные данные - это исходные данные, предоставляемые системой для тестирования, обучения или создания шаблонов. seeders Папка обычно содержит данные, но мы не будем использовать , что в этом учебнике.
+**config.json**  - файл содержит наши настройки конфигурации приложения, такие как настройка аутентификации базы данных. 
+migrations папка будет содержать миграции нашего приложения, а models папка будет содержать модели приложений. 
+Исходные данные - это данные, предоставляемые системой для тестирования, обучения или создания шаблонов. 
+seeders - папка обычно содержит данные, но мы не будем использовать их, в этом приложении.
 
 На этом этапе нам нужно установить сам пакет Sequelize вместе с его зависимостями.
 
-$ npm i sequelize pg pg-hstore
+`npm i sequelize pg pg-hstore`
 
-pg будет отвечать за создание соединения с базой данных, пока pg-hstore является модулем для сериализации и десериализации данных JSON в формате Postgres hstore.
+**pg** будет отвечать за создание соединения с базой данных, **pg-hstore** является модулем для сериализации и десериализации данных JSON в формате Postgres hstore.
 
 Теперь,  нам нужно будет выполнить init команду, чтобы создать указанные папки и сгенерировать шаблонный код.
 
@@ -267,8 +249,6 @@ $ export DATABASE_URL=our-database-url
 $ sequelize model:create --name Todo --attributes title:string
 
 Это создаст todo.js файл в server/models папке, а также <date>-create-todo.jsфайл миграции в server/migrationsпапке. <date> будет дата создания модели.
-
-Это создаст todo.js файл в server/models папке, а также <date>-create-todo.js файл миграции в server/migrations папке. <date> будет дата создания модели.
 
 Сгенерированный код модели Todo:
 
