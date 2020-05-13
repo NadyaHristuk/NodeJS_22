@@ -24,7 +24,7 @@ SVG	Imagemin-svgo
 WebP	imagemin-WebP	
 
 Imagemin npm-модуль
-
+```
 const imagemin = require('imagemin');
 const imageminJpegtran = require('imagemin-jpegtran');
 const imageminPngquant = require('imagemin-pngquant');
@@ -43,6 +43,6 @@ const imageminPngquant = require('imagemin-pngquant');
 	console.log(files);
 	//=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
 })();
+```
 
 Источник - https://web.dev/use-imagemin-to-compress-images/
-```
