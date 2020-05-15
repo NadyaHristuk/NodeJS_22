@@ -1,0 +1,27 @@
+{
+  "name": "testing-express-api",
+  "version": "1.0.0",
+  "description": "Testing Express APIs with Supertest",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "node test | tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+  ],
+  "author": "",
+  "license": "ISC",
+  "homepage": "",
+  "dependencies": {
+    "express": "^4.11.2"
+  },
+  "devDependencies": {
+    "supertest": "^0.15.0",
+    "tap-spec": "^2.2.1",
+    "tape": "^3.5.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "6_multiple-file-upload-node",
+  "version": "1.0.0",
+  "description": "Multiple-File-upload-in-Node ===================",
+  "main": "Server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test | tap-spec"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "supertest": "^4.0.2"
+  }
+}
