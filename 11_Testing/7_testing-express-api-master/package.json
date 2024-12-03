@@ -20,7 +20,7 @@
     "express": "^4.21.1"
   },
   "devDependencies": {
-    "supertest": "^0.15.0",
+    "supertest": "^7.0.0",
     "tap-spec": "^2.2.1",
     "tape": "^3.5.0"
   }
