@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "nodemailer": ">=8.0.5"
+    "nodemailer": ">=9.0.1"
   },
   "devDependencies": {},
   "scripts": {
